@@ -16,6 +16,7 @@ require XSLoader;
 XSLoader::load('MySQL::BinLog', $VERSION);
 
 *MySQL::BinLog::Binary_log_event::Query::get_event_type = *MySQL::BinLog::Binary_log_event::get_event_type;
+*MySQL::BinLog::Binary_log_event::User_var::get_event_type = *MySQL::BinLog::Binary_log_event::get_event_type;
 
 1;
 __END__
