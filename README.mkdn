@@ -1,0 +1,6 @@
+This module depended on mysql-replication-listener
+https://launchpad.net/mysql-replication-listener
+
+building tutorial is here
+http://blog.riywo.com/2012/07/08/133005
+
