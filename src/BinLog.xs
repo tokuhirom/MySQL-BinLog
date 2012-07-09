@@ -34,6 +34,14 @@ PPCODE:
     XSRETURN_UNDEF;
 
 void
+get_position(SV *sv_self)
+PPCODE:
+    dTARG;
+    XS_DEBLESS(sv_self, mysql::Binary_log*, binlogdriver);
+    int pos = binlogdriver->get_position();
+    mXPUSHi(pos);
+
+void
 connect(SV *sv_self)
 PPCODE:
     XS_DEBLESS(sv_self, mysql::Binary_log*, binlogdriver);
@@ -55,11 +63,20 @@ PPCODE:
         switch (event->get_event_type()) {
         case mysql::QUERY_EVENT:
             XPUSHs(XS_BLESS(event, "MySQL::BinLog::Binary_log_event::Query"));
+            break;
+        case mysql::INCIDENT_EVENT:
+            XPUSHs(XS_BLESS(event, "MySQL::BinLog::Binary_log_event::Incident"));
+            break;
+        case mysql::ROTATE_EVENT:
+            XPUSHs(XS_BLESS(event, "MySQL::BinLog::Binary_log_event::Rotate"));
+            break;
         case mysql::USER_VAR_EVENT:
             XPUSHs(XS_BLESS(event, "MySQL::BinLog::Binary_log_event::User_var"));
             //PerlIO_printf(PerlIO_stderr(), "OOO %d\n", event->get_event_type());
+            break;
         default:
             XPUSHs(XS_BLESS(event, "MySQL::BinLog::Binary_log_event"));
+            break;
         }
         XSRETURN(1);
     }
@@ -88,7 +105,7 @@ get_event_type(SV *sv_self)
 PPCODE:
     dTARG;
     XS_DEBLESS(sv_self, mysql::Binary_log_event*, event);
-    XPUSHi(event->get_event_type());
+    mXPUSHi(event->get_event_type());
 
 MODULE = MySQL::BinLog    PACKAGE = MySQL::BinLog::Binary_log_event::Query
 
@@ -101,6 +118,40 @@ PPCODE:
     XS_DEBLESS(sv_self, mysql::Query_event*, event);
     SV * ret = newSVpv(event->query.c_str(), event->query.size());
     mXPUSHs(ret);
+    XSRETURN(1);
+
+MODULE = MySQL::BinLog    PACKAGE = MySQL::BinLog::Binary_log_event::Incident
+
+void
+message(SV *sv_self)
+PPCODE:
+    dTARG;
+    XS_DEBLESS(sv_self, mysql::Incident_event*, event);
+    SV * ret = newSVpv(event->message.c_str(), event->message.size());
+    mXPUSHs(ret);
+    XSRETURN(1);
+
+MODULE = MySQL::BinLog    PACKAGE = MySQL::BinLog::Binary_log_event::Rotate
+
+void
+binlog_file(SV *sv_self)
+PPCODE:
+    dTARG;
+    // PerlIO_printf(PerlIO_stderr(), "QQQ\n");
+
+    XS_DEBLESS(sv_self, mysql::Rotate_event*, event);
+    SV * ret = newSVpv(event->binlog_file.c_str(), event->binlog_file.size());
+    mXPUSHs(ret);
+    XSRETURN(1);
+
+void
+binlog_pos(SV *sv_self)
+PPCODE:
+    dTARG;
+    // PerlIO_printf(PerlIO_stderr(), "QQQ\n");
+
+    XS_DEBLESS(sv_self, mysql::Rotate_event*, event);
+    mXPUSHi(event->binlog_pos);
     XSRETURN(1);
 
 MODULE = MySQL::BinLog    PACKAGE = MySQL::BinLog::Binary_log_event::User_var

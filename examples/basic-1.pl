@@ -17,12 +17,16 @@ my $url = shift or pod2usage;
 say("Connecting tot $url");
 my $binlog = MySQL::BinLog->new(MySQL::BinLog::create_transport($url));
 $binlog->connect();
-$binlog->set_position(4);
+$binlog->set_position(0);
 say("connected: $binlog");
 while (my $event = $binlog->wait_for_next_event()) {
     my $type = $event->get_event_type();
     if ($type eq QUERY_EVENT) {
         printf("QUERY: %s\n", $event->query);
+    } elsif ($type eq INCIDENT_EVENT) {
+        printf("INCIDENT: %s\n", $event->message);
+    } elsif ($type eq ROTATE_EVENT) {
+        printf("ROTATE: %s, %s\n", $event->binlog_file, $event->binlog_pos);
     } elsif ($type eq USER_VAR_EVENT) {
         printf("name: %s\n", $event->name);
         printf("value: %s\n", $event->value);

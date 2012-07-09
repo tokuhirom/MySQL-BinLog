@@ -6,17 +6,23 @@ our $VERSION = '0.01';
 use parent qw(Exporter);
 
 use constant {
-    QUERY_EVENT => 2,
-    USER_VAR_EVENT => 14,
+    QUERY_EVENT              => 2,
+    USER_VAR_EVENT           => 14,
+    ROTATE_EVENT             => 4,
+    FORMAT_DESCRIPTION_EVENT => 15,
+    XID_EVENT                => 16,
+    INCIDENT_EVENT           => 26,
 };
 
-our @EXPORT = qw(QUERY_EVENT USER_VAR_EVENT);
+our @EXPORT = qw(QUERY_EVENT USER_VAR_EVENT ROTATE_EVENT INCIDENT_EVENT);
 
 require XSLoader;
 XSLoader::load('MySQL::BinLog', $VERSION);
 
 *MySQL::BinLog::Binary_log_event::Query::get_event_type = *MySQL::BinLog::Binary_log_event::get_event_type;
 *MySQL::BinLog::Binary_log_event::User_var::get_event_type = *MySQL::BinLog::Binary_log_event::get_event_type;
+*MySQL::BinLog::Binary_log_event::Rotate::get_event_type = *MySQL::BinLog::Binary_log_event::get_event_type;
+*MySQL::BinLog::Binary_log_event::Incident::get_event_type = *MySQL::BinLog::Binary_log_event::get_event_type;
 
 1;
 __END__

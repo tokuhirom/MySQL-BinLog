@@ -18,3 +18,4 @@ META.yml
 README
 lib/MySQL/BinLog.c
 src/BinLog.cpp
+BinLog.bs
