@@ -13,11 +13,12 @@ GetOptions(
     v => \my $verbose,
 );
 
+my $last_table_event;
 my $url = shift or pod2usage;
 say("Connecting tot $url");
 my $binlog = MySQL::BinLog->new(MySQL::BinLog::create_transport($url));
 $binlog->connect();
-# $binlog->set_position(4);
+$binlog->set_position(4);
 say("connected: $binlog");
 while (my $event = $binlog->wait_for_next_event()) {
     my $type = $event->get_event_type();
@@ -32,6 +33,7 @@ while (my $event = $binlog->wait_for_next_event()) {
         printf("name: %s\n", $event->name);
         printf("value: %s\n", $event->value);
     } elsif ($type eq TABLE_MAP_EVENT) {
+        $last_table_event = $event;
         printf(
             "  TABLE_MAP_EVENT: %s, table_id: %s table_name: %s, columns: %s metadata: %s, null_bits: %s\n",
             $event->db_name, $event->table_id,
@@ -53,6 +55,17 @@ while (my $event = $binlog->wait_for_next_event()) {
                 join( ':', $event->row ),
             )
         );
+        if ($last_table_event) {
+            my $rows = MySQL::BinLog::Row_event_set->new($event, $last_table_event);
+            my $iter = $rows->begin();
+            while (my $row = $iter->next()) {
+                say "    SIZE: " . $row->size;
+                my $fields_iter = $row->begin;
+                while (my $field = $fields_iter->next) {
+                    printf("       TYPE: %s STR: %s\n", $field->type, $field->as_string);
+                }
+            }
+        }
     } else {
         if ($verbose) {
             printf("EVENT: %s %s\n", $event->get_event_type, $event->get_event_type_str);
