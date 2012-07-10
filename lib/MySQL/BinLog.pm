@@ -56,6 +56,8 @@ for my $child_moniker (grep /::$/, keys %MySQL::BinLog::Binary_log_event::) {
 }
 }
 
+use MySQL::BinLog::Binary_log_event;
+
 1;
 __END__
 

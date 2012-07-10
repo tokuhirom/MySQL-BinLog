@@ -91,3 +91,7 @@ perltidy.ERR$
 ^MANIFEST\.SKIP
 \b\.gitignore
 \.bak$
+\.o$
+^log$
+^src/BinLog.cpp$
+\.bs$

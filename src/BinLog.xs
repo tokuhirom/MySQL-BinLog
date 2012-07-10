@@ -124,13 +124,6 @@ PPCODE:
     mXPUSHp(event_type_str, strlen(event_type_str));
 
 void
-header(SV *sv_self)
-PPCODE:
-    dTARG;
-    XS_DEBLESS(sv_self, mysql::Binary_log_event*, event);
-    XPUSHs(XS_BLESS(event->header(), "MySQL::BinLog::Log_event_header"));
-
-void
 DESTROY(SV *sv_self)
 PPCODE:
     XS_DEBLESS(sv_self, mysql::Binary_log_event*, event);
@@ -140,43 +133,43 @@ PPCODE:
 MODULE = MySQL::BinLog    PACKAGE = MySQL::BinLog::Log_event_header
 
 void
-marker(SV * sv_self)
+_marker(SV * sv_self)
 PPCODE:
     XS_DEBLESS(sv_self, mysql::Log_event_header*, header);
     mXPUSHi(header->marker);
 
 void
-timestamp(SV * sv_self)
+_timestamp(SV * sv_self)
 PPCODE:
     XS_DEBLESS(sv_self, mysql::Log_event_header*, header);
     mXPUSHi(header->timestamp);
 
 void
-type_code(SV * sv_self)
+_type_code(SV * sv_self)
 PPCODE:
     XS_DEBLESS(sv_self, mysql::Log_event_header*, header);
     mXPUSHi(header->type_code);
 
 void
-server_id(SV * sv_self)
+_server_id(SV * sv_self)
 PPCODE:
     XS_DEBLESS(sv_self, mysql::Log_event_header*, header);
     mXPUSHi(header->server_id);
 
 void
-event_length(SV * sv_self)
+_event_length(SV * sv_self)
 PPCODE:
     XS_DEBLESS(sv_self, mysql::Log_event_header*, header);
     mXPUSHi(header->event_length);
 
 void
-next_position(SV * sv_self)
+_next_position(SV * sv_self)
 PPCODE:
     XS_DEBLESS(sv_self, mysql::Log_event_header*, header);
     mXPUSHi(header->next_position);
 
 void
-flags(SV * sv_self)
+_flags(SV * sv_self)
 PPCODE:
     XS_DEBLESS(sv_self, mysql::Log_event_header*, header);
     mXPUSHi(header->flags);

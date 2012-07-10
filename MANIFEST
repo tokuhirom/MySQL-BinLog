@@ -3,6 +3,7 @@ author/sch-insert.pl
 Changes
 examples/basic-1.pl
 examples/sch-client.pl
+HACKING
 inc/Module/Install.pm
 inc/Module/Install/AuthorTests.pm
 inc/Module/Install/Base.pm
@@ -12,6 +13,8 @@ inc/Module/Install/Metadata.pm
 inc/Module/Install/WriteAll.pm
 inc/Module/Install/XSUtil.pm
 lib/MySQL/BinLog.pm
+lib/MySQL/BinLog/Binary_log_event.pm
+lib/MySQL/BinLog/Log_event_header.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
