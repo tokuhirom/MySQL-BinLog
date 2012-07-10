@@ -1,0 +1,6 @@
+If you want to get the row data, use 'SET SESSION binlog_format = 'ROW';'
+
+see also http://dev.mysql.com/doc/refman/5.1/en/binary-log-setting.html
+
+Technical note is here: http://intuitive-search.blogspot.jp/2011_07_01_archive.html
+

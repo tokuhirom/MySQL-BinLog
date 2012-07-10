@@ -9,7 +9,7 @@ use DBI;
 
 my $dbh = DBI->connect('dbi:mysql:hostname=127.0.0.1;port=21580;database=foo', 'msandbox', 'msandbox', {RaiseError => 1})
     or die;
-for (1..10) {
+for (1..1) {
     {
         my $sth = $dbh->prepare(q{INSERT INTO foo.john (id) values (?)});
         $sth->execute(3);

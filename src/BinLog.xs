@@ -30,7 +30,9 @@ void
 set_position(SV *sv_self, int i)
 PPCODE:
     XS_DEBLESS(sv_self, mysql::Binary_log*, binlogdriver);
-    binlogdriver->set_position(i);
+    if (binlogdriver->set_position(i) != ERR_OK) {
+        croak("Can't reposition the binary log reader.");
+    }
     XSRETURN_UNDEF;
 
 void
@@ -45,7 +47,9 @@ void
 connect(SV *sv_self)
 PPCODE:
     XS_DEBLESS(sv_self, mysql::Binary_log*, binlogdriver);
-    binlogdriver->connect();
+    if (binlogdriver->connect()) {
+        croak("Can't connect to the master.");
+    }
     XSRETURN_UNDEF;
 
 void
@@ -72,6 +76,10 @@ PPCODE:
             break;
         case mysql::USER_VAR_EVENT:
             XPUSHs(XS_BLESS(event, "MySQL::BinLog::Binary_log_event::User_var"));
+            //PerlIO_printf(PerlIO_stderr(), "OOO %d\n", event->get_event_type());
+            break;
+        case mysql::TABLE_MAP_EVENT:
+            XPUSHs(XS_BLESS(event, "MySQL::BinLog::Binary_log_event::Table_map"));
             //PerlIO_printf(PerlIO_stderr(), "OOO %d\n", event->get_event_type());
             break;
         default:
@@ -115,6 +123,64 @@ PPCODE:
     const char *event_type_str = mysql::system::get_event_type_str(event->get_event_type());
     mXPUSHp(event_type_str, strlen(event_type_str));
 
+void
+header(SV *sv_self)
+PPCODE:
+    dTARG;
+    XS_DEBLESS(sv_self, mysql::Binary_log_event*, event);
+    XPUSHs(XS_BLESS(event->header(), "MySQL::BinLog::Log_event_header"));
+
+void
+DESTROY(SV *sv_self)
+PPCODE:
+    XS_DEBLESS(sv_self, mysql::Binary_log_event*, event);
+    delete event;
+    sv_setiv(SvRV(sv_self), 0); // set NULL
+
+MODULE = MySQL::BinLog    PACKAGE = MySQL::BinLog::Log_event_header
+
+void
+marker(SV * sv_self)
+PPCODE:
+    XS_DEBLESS(sv_self, mysql::Log_event_header*, header);
+    mXPUSHi(header->marker);
+
+void
+timestamp(SV * sv_self)
+PPCODE:
+    XS_DEBLESS(sv_self, mysql::Log_event_header*, header);
+    mXPUSHi(header->timestamp);
+
+void
+type_code(SV * sv_self)
+PPCODE:
+    XS_DEBLESS(sv_self, mysql::Log_event_header*, header);
+    mXPUSHi(header->type_code);
+
+void
+server_id(SV * sv_self)
+PPCODE:
+    XS_DEBLESS(sv_self, mysql::Log_event_header*, header);
+    mXPUSHi(header->server_id);
+
+void
+event_length(SV * sv_self)
+PPCODE:
+    XS_DEBLESS(sv_self, mysql::Log_event_header*, header);
+    mXPUSHi(header->event_length);
+
+void
+next_position(SV * sv_self)
+PPCODE:
+    XS_DEBLESS(sv_self, mysql::Log_event_header*, header);
+    mXPUSHi(header->next_position);
+
+void
+flags(SV * sv_self)
+PPCODE:
+    XS_DEBLESS(sv_self, mysql::Log_event_header*, header);
+    mXPUSHi(header->flags);
+
 MODULE = MySQL::BinLog    PACKAGE = MySQL::BinLog::Binary_log_event::Query
 
 void
@@ -149,6 +215,12 @@ PPCODE:
     SV * ret = newSVpv(event->message.c_str(), event->message.size());
     mXPUSHs(ret);
     XSRETURN(1);
+
+void
+type(SV *sv_self)
+PPCODE:
+    XS_DEBLESS(sv_self, mysql::Incident_event*, event);
+    mXPUSHi(event->type);
 
 MODULE = MySQL::BinLog    PACKAGE = MySQL::BinLog::Binary_log_event::Rotate
 
@@ -197,3 +269,4 @@ PPCODE:
     mXPUSHs(ret);
     XSRETURN(1);
 
+MODULE = MySQL::BinLog    PACKAGE = MySQL::BinLog::Binary_log_event::Table_map
