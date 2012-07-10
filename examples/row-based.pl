@@ -48,7 +48,7 @@ sub show_row {
     my $row = shift;
     my $fields_iter = $row->begin;
     while (my $field = $fields_iter->next) {
-        printf("       TYPE: %s STR: %s\n", $field->type, $field->as_string);
+        printf("       TYPE: %-10s STR: %s\n", $field->type_str, $field->as_string);
     }
 }
 
