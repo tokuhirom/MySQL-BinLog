@@ -16,6 +16,26 @@
 #define XS_BLESS(src, klass) \
     sv_bless(newRV_noinc(sv_2mortal(newSViv(PTR2IV(src)))), gv_stashpv(klass, TRUE))
 
+#define BLXS_MAKE_ACCESSOR_STR(type, accessor) \
+    dTARG; \
+    XS_DEBLESS(sv_self, type, event); \
+    mXPUSHp(event->accessor.c_str(), event->accessor.size());
+
+#define BLXS_MAKE_ACCESSOR_INT(type, accessor) \
+    dTARG; \
+    XS_DEBLESS(sv_self, type, event); \
+    mXPUSHi(event->accessor);
+
+#define BLXS_MAKE_ACCESSOR_INTARRAY(type, accessor) \
+    dTARG; \
+    XS_DEBLESS(sv_self, type, event); \
+    std::vector<uint8_t>::iterator iter; \
+    for (iter=event->accessor.begin(); iter!=event->accessor.end(); ++iter) { \
+        mXPUSHi(*iter); \
+    } \
+    XSRETURN(event->accessor.size());
+
+
 MODULE = MySQL::BinLog    PACKAGE = MySQL::BinLog
 
 void
@@ -77,6 +97,11 @@ PPCODE:
         case mysql::USER_VAR_EVENT:
             XPUSHs(XS_BLESS(event, "MySQL::BinLog::Binary_log_event::User_var"));
             //PerlIO_printf(PerlIO_stderr(), "OOO %d\n", event->get_event_type());
+            break;
+        case mysql::WRITE_ROWS_EVENT:
+        case mysql::UPDATE_ROWS_EVENT:
+        case mysql::DELETE_ROWS_EVENT:
+            XPUSHs(XS_BLESS(event, "MySQL::BinLog::Binary_log_event::Row"));
             break;
         case mysql::TABLE_MAP_EVENT:
             XPUSHs(XS_BLESS(event, "MySQL::BinLog::Binary_log_event::Table_map"));
@@ -263,3 +288,76 @@ PPCODE:
     XSRETURN(1);
 
 MODULE = MySQL::BinLog    PACKAGE = MySQL::BinLog::Binary_log_event::Table_map
+
+void
+table_id(SV *sv_self)
+PPCODE:
+    BLXS_MAKE_ACCESSOR_INT(mysql::Table_map_event*, table_id);
+
+void
+flags(SV *sv_self)
+PPCODE:
+    BLXS_MAKE_ACCESSOR_INT(mysql::Table_map_event*, flags);
+
+void
+db_name(SV *sv_self)
+PPCODE:
+    BLXS_MAKE_ACCESSOR_STR(mysql::Table_map_event*, db_name);
+
+void
+table_name(SV *sv_self)
+PPCODE:
+    BLXS_MAKE_ACCESSOR_STR(mysql::Table_map_event*, table_name);
+
+void
+columns(SV *sv_self)
+PPCODE:
+    BLXS_MAKE_ACCESSOR_INTARRAY(mysql::Table_map_event*, columns);
+
+void
+metadata(SV *sv_self)
+PPCODE:
+    BLXS_MAKE_ACCESSOR_INTARRAY(mysql::Table_map_event*, metadata); 
+
+void
+null_bits(SV *sv_self)
+PPCODE:
+    BLXS_MAKE_ACCESSOR_INTARRAY(mysql::Table_map_event*, null_bits);
+
+MODULE = MySQL::BinLog    PACKAGE = MySQL::BinLog::Binary_log_event::Row
+
+void
+table_id(SV *sv_self)
+PPCODE:
+    BLXS_MAKE_ACCESSOR_INT(mysql::Row_event*, table_id);
+
+void
+flags(SV *sv_self)
+PPCODE:
+    BLXS_MAKE_ACCESSOR_INT(mysql::Row_event*, flags);
+
+void
+columns_len(SV *sv_self)
+PPCODE:
+    BLXS_MAKE_ACCESSOR_INT(mysql::Row_event*, columns_len);
+
+void
+null_bits_len(SV *sv_self)
+PPCODE:
+    BLXS_MAKE_ACCESSOR_INT(mysql::Row_event*, null_bits_len);
+
+void
+columns_before_image(SV *sv_self)
+PPCODE:
+    BLXS_MAKE_ACCESSOR_INTARRAY(mysql::Row_event*, columns_before_image);
+
+void
+used_columns(SV *sv_self)
+PPCODE:
+    BLXS_MAKE_ACCESSOR_INTARRAY(mysql::Row_event*, used_columns);
+
+void
+row(SV *sv_self)
+PPCODE:
+    BLXS_MAKE_ACCESSOR_INTARRAY(mysql::Row_event*, row);
+

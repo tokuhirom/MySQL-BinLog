@@ -31,6 +31,28 @@ while (my $event = $binlog->wait_for_next_event()) {
     } elsif ($type eq USER_VAR_EVENT) {
         printf("name: %s\n", $event->name);
         printf("value: %s\n", $event->value);
+    } elsif ($type eq TABLE_MAP_EVENT) {
+        printf(
+            "  TABLE_MAP_EVENT: %s, table_id: %s table_name: %s, columns: %s metadata: %s, null_bits: %s\n",
+            $event->db_name, $event->table_id,
+            $event->table_name,
+            join( ':', $event->columns ),
+            join( ':', $event->metadata ),
+            join( ':', $event->null_bits ),
+        );
+    } elsif ($type eq WRITE_ROWS_EVENT) {
+        printf(
+            "  WRITE_ROWS: %s\n",
+            join(' ',
+                $event->table_id,
+                $event->flags,
+                $event->columns_len,
+                $event->null_bits_len,
+                join( ':', $event->columns_before_image ),
+                join( ':', $event->used_columns ),
+                join( ':', $event->row ),
+            )
+        );
     } else {
         if ($verbose) {
             printf("EVENT: %s %s\n", $event->get_event_type, $event->get_event_type_str);

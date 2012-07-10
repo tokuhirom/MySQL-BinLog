@@ -18,5 +18,9 @@ for (1..1) {
         my $sth = $dbh->prepare(q{INSERT INTO john (id) values (?)});
         $sth->execute(3);
     }
+    {
+        my $sth = $dbh->prepare(q{INSERT INTO hoi (id, name) values (?, "HOGEHOGE")});
+        $sth->execute(int rand(500));
+    }
 }
 

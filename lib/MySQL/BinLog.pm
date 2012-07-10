@@ -43,17 +43,12 @@ our @EXPORT = (keys %constants);
 require XSLoader;
 XSLoader::load('MySQL::BinLog', $VERSION);
 
-*MySQL::BinLog::Binary_log_event::Query::get_event_type = *MySQL::BinLog::Binary_log_event::get_event_type;
-*MySQL::BinLog::Binary_log_event::User_var::get_event_type = *MySQL::BinLog::Binary_log_event::get_event_type;
-*MySQL::BinLog::Binary_log_event::Rotate::get_event_type = *MySQL::BinLog::Binary_log_event::get_event_type;
-*MySQL::BinLog::Binary_log_event::Incident::get_event_type = *MySQL::BinLog::Binary_log_event::get_event_type;
-
-BEGIN {
 for my $child_moniker (grep /::$/, keys %MySQL::BinLog::Binary_log_event::) {
     $child_moniker =~ s/::$//;
+    warn $child_moniker;
     no strict 'refs';
     unshift @{"MySQL::BinLog::Binary_log_event::${child_moniker}::ISA"}, 'MySQL::BinLog::Binary_log_event';
-}
+    *{"MySQL::BinLog::Binary_log_event::${child_moniker}::get_event_type"} = *MySQL::BinLog::Binary_log_event::get_event_type;
 }
 
 use MySQL::BinLog::Binary_log_event;
