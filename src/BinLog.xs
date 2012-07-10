@@ -198,31 +198,6 @@ PPCODE:
     XPUSHs(sv_bless(newRV_noinc(sv_2mortal(newSViv(PTR2IV(driver)))), gv_stashpv("MySQL::BinLog::Binary_log_driver", TRUE)));
     XSRETURN(1);
 
-void
-rows(SV *sv_row_event, SV *sv_table_map_event)
-PPCODE:
-    XS_DEBLESS(sv_row_event, mysql::Row_event*, row_event);
-    XS_DEBLESS(sv_table_map_event, mysql::Table_map_event*, table_map_event);
-    mysql::Row_event_set rows(row_event, table_map_event);
-    mysql::Row_event_set::iterator iter = rows.begin();
-    int n = 0;
-    PerlIO_printf(PerlIO_stderr(), "ready to dump FIELD\n");
-    do {
-        PerlIO_printf(PerlIO_stderr(), "wooo\n");
-        mysql::Row_of_fields fields = *iter;
-        mysql::Converter converter;
-        for (mysql::Row_of_fields::iterator f_iter=fields.begin(); f_iter != fields.end(); ++f_iter) {
-            std::string key;
-            converter.to(key, *f_iter);
-            long unsigned int m;
-            PerlIO_printf(PerlIO_stderr(), "FIELD: %s, %s, %d\n", key.c_str(), (*f_iter).as_c_str(m), f_iter->type());
-        }
-        ++n;
-    } while (++iter != rows.end());
-    n = 0; // DEBUG
-    XSRETURN(n);
-
-
 MODULE = MySQL::BinLog    PACKAGE = MySQL::BinLog::Binary_log_event
 
 void

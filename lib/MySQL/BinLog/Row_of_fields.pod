@@ -1,0 +1,19 @@
+=head1 MySQL::BinLog::Row_of_fields
+
+=over 4
+
+=item my $iter = $row_of_fields->begin();
+
+Get the instance of iterator(I<MySQL::BinLog::Row_of_fields::iterator>)
+
+=back
+
+=head1 MySQL::BinLog::Row_of_fields::iterator
+
+=over 4
+
+=item $iter->next() : Maybe[MySQL::BinLog::Value]
+
+Get a next item from iterator. When it reached to end, it returns undef.
+
+=back

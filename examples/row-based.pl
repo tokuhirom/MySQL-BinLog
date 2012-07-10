@@ -56,5 +56,5 @@ __END__
 
 =head1 SYNOPSIS
 
-    % basic-1.pl mysql://msandbox:msandbox@127.0.0.1:21580
+    % row-based.pl mysql://msandbox:msandbox@127.0.0.1:21580
 

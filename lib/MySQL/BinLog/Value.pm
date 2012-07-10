@@ -10,4 +10,28 @@ sub type_str {
 }
 
 1;
+__END__
 
+=head1 NAME
+
+MySQL::BinLog::Value - value object
+
+=head1 METHODS
+
+=over 4
+
+=item $value->type_str
+
+type name in string
+
+=item $value->type()
+
+Get type id
+
+=item $value->length()
+
+=item $value->is_null()
+
+=item $value->as_string()
+
+=back
