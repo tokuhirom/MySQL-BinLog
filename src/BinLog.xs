@@ -107,6 +107,14 @@ PPCODE:
     XS_DEBLESS(sv_self, mysql::Binary_log_event*, event);
     mXPUSHi(event->get_event_type());
 
+void
+get_event_type_str(SV *sv_self)
+PPCODE:
+    dTARG;
+    XS_DEBLESS(sv_self, mysql::Binary_log_event*, event);
+    const char *event_type_str = mysql::system::get_event_type_str(event->get_event_type());
+    mXPUSHp(event_type_str, strlen(event_type_str));
+
 MODULE = MySQL::BinLog    PACKAGE = MySQL::BinLog::Binary_log_event::Query
 
 void

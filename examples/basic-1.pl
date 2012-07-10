@@ -32,7 +32,7 @@ while (my $event = $binlog->wait_for_next_event()) {
         printf("value: %s\n", $event->value);
     } else {
         if ($verbose) {
-            printf("EVENT: %s\n", $event->get_event_type);
+            printf("EVENT: %s %s\n", $event->get_event_type, $event->get_event_type_str);
         }
     }
 }
