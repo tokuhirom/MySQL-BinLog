@@ -128,6 +128,17 @@ PPCODE:
     mXPUSHs(ret);
     XSRETURN(1);
 
+void
+db_name(SV *sv_self)
+PPCODE:
+    dTARG;
+    // PerlIO_printf(PerlIO_stderr(), "QQQ\n");
+
+    XS_DEBLESS(sv_self, mysql::Query_event*, event);
+    SV * ret = newSVpv(event->db_name.c_str(), event->db_name.size());
+    mXPUSHs(ret);
+    XSRETURN(1);
+
 MODULE = MySQL::BinLog    PACKAGE = MySQL::BinLog::Binary_log_event::Incident
 
 void

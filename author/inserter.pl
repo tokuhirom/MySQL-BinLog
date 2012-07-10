@@ -7,8 +7,16 @@ use autodie;
 
 use DBI;
 
-my $dbh = DBI->connect('dbi:mysql:hostname=127.0.0.1;port=21580', 'msandbox', 'msandbox', {RaiseError => 1})
+my $dbh = DBI->connect('dbi:mysql:hostname=127.0.0.1;port=21580;database=foo', 'msandbox', 'msandbox', {RaiseError => 1})
     or die;
-my $sth = $dbh->prepare(q{INSERT INTO foo.john (id) values (?)});
-$sth->execute(3);
+for (1..10) {
+    {
+        my $sth = $dbh->prepare(q{INSERT INTO foo.john (id) values (?)});
+        $sth->execute(3);
+    }
+    {
+        my $sth = $dbh->prepare(q{INSERT INTO john (id) values (?)});
+        $sth->execute(3);
+    }
+}
 
