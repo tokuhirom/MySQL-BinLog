@@ -2,7 +2,7 @@ package MySQL::BinLog;
 use strict;
 use warnings;
 use 5.014000;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 use parent qw(Exporter);
 
 our %TYPES = (
