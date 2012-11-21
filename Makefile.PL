@@ -44,7 +44,6 @@ test_requires 'Test::Requires';
 tests_recursive;
 author_tests 'xt';
 
-my $want_xs = want_xs();
 use_xshelper;
 cc_warnings;
 requires_cplusplus;
