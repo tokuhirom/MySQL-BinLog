@@ -15,7 +15,7 @@ GetOptions(
 
 my $last_table_event;
 my $url = shift or pod2usage;
-say("Connecting tot $url");
+say("Connecting to $url");
 my $binlog = MySQL::BinLog->new(MySQL::BinLog::create_transport($url));
 $binlog->connect();
 $binlog->set_position(4);
