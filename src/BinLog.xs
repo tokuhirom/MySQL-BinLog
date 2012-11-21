@@ -2,7 +2,9 @@
 #undef do_open
 #undef do_close
 #undef io
+#define io ioo
 #include "binlog_api.h"
+#undef io
 #include "value.h"
 #include <iostream>
 
@@ -51,10 +53,12 @@ namespace BLXS {
             iter_ = rows_.begin();
         }
         ~Row_event_set_iter() {
+            dTHX;
             SvREFCNT_dec(row_event_sv_);
             SvREFCNT_dec(table_map_event_sv_);
         }
         SV *next() {
+            dTHX;
             if (!is_first_time_ && iter_ == rows_.end()) {
                 return &PL_sv_undef;
             } else {
@@ -84,9 +88,11 @@ namespace BLXS {
             iter_ = row_of_fields_->begin();
         }
         ~Row_of_fields_iter() {
+            dTHX;
             SvREFCNT_dec(row_of_fields_sv_);
         }
         SV *next() {
+            dTHX;
             if (!is_first_time_ && iter_ == row_of_fields_->end()) {
                 return &PL_sv_undef;
             } else {
