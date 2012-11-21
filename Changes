@@ -1,5 +1,9 @@
 Revision history for Perl extension MySQL::BinLog
 
+0.03
+
+    - fixed threaded perl support
+
 0.02
 
     - enhancements!!!
