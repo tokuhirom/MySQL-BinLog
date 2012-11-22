@@ -18,6 +18,7 @@ for my $method (qw(
     flags
 )) {
     no strict 'refs';
+    ## no critic.
     *{__PACKAGE__ . "::$method"} = eval "sub { _$method(shift->[0]) }";
     die $@ if $@;
 }

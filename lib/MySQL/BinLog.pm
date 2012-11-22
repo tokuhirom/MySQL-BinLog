@@ -2,7 +2,7 @@ package MySQL::BinLog;
 use strict;
 use warnings;
 use 5.014000;
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 use parent qw(Exporter);
 
 our %TYPES = (
@@ -254,7 +254,7 @@ Get event name in string.
 
 =over 4
 
-=back table_id
+=item table_id
 
 =item flags
 

@@ -58,3 +58,8 @@ Gosuke
 Miyashita
 mysqldiff
 mmm
+Str
+binlog
+libreplication
+metadata
+url
